@@ -22,7 +22,7 @@ var (
 
 const authToken = "secrettoken123"
 
-func handler(w http.ResponseWriter, r *http.Request) {
+func Handler(w http.ResponseWriter, r *http.Request) {
     auth := strings.TrimSpace(r.Header.Get("Authorization"))
     if !strings.HasPrefix(auth, "Bearer ") {
         w.WriteHeader(http.StatusUnauthorized)
@@ -130,10 +130,4 @@ func handleDelete(w http.ResponseWriter, r *http.Request) {
     delete(items, deleteItem.ID)
     w.WriteHeader(http.StatusOK)
     json.NewEncoder(w).Encode(map[string]string{"message": "Item deleted"})
-}
-
-// Required entry point
-func main() {
-    http.HandleFunc("/", handler)
-    http.ListenAndServe(":3001", nil) // Vercel override this
 }
