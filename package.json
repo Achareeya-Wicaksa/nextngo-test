@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+        "vercel-build": "cd src && npm install && npm run build"
+
   },
   "dependencies": {
     "next": "15.3.3",
@@ -23,4 +25,5 @@
     "tailwindcss": "^4.1.10",
     "typescript": "^5"
   }
+  
 }

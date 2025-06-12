@@ -1,9 +1,16 @@
 {
   "functions": {
     "backend/api/*.go": {
-      "runtime": "vercel-go@0.5.0"
+      "runtime": "vercel-go@0.5.0",
+      "maxDuration": 10
     }
   },
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "/backend/api/:path*"
+    }
+  ],
   "builds": [
     {
       "src": "src/package.json",
@@ -12,16 +19,6 @@
     {
       "src": "backend/api/*.go",
       "use": "@vercel/go"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/backend/api/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/src/$1"
     }
   ]
 }
