@@ -2,7 +2,7 @@
   "version": 2,
   "functions": {
     "api/items.go": {
-      "runtime": "go1.x"
+      "runtime": "vercel-go@1.0.0"
     }
   },
   "routes": [
