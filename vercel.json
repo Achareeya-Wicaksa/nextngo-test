@@ -1,14 +1,27 @@
 {
-  "version": 2,
   "functions": {
-    "api/items.go": {
-      "runtime": "vercel-go@1.0.0"
+    "backend/api/*.go": {
+      "runtime": "vercel-go@0.5.0"
     }
   },
+  "builds": [
+    {
+      "src": "src/package.json",
+      "use": "@vercel/next"
+    },
+    {
+      "src": "backend/api/*.go",
+      "use": "@vercel/go"
+    }
+  ],
   "routes": [
     {
-      "src": "/api/items",
-      "dest": "api/items.go"
+      "src": "/api/(.*)",
+      "dest": "/backend/api/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/src/$1"
     }
   ]
 }
