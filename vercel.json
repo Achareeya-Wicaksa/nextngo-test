@@ -1,10 +1,14 @@
 {
+  "version": 2,
   "functions": {
-    "api/go/*.go": {
+    "backend/api/items.go": {
       "runtime": "go"
     }
   },
-  "rewrites": [
-    { "source": "/api/go", "destination": "/api/go/main.go" }
+  "routes": [
+    {
+      "src": "/api/items",
+      "dest": "backend/api/items.go"
+    }
   ]
 }

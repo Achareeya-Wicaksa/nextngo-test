@@ -1,8 +1,7 @@
-package api
+package main
 
 import (
     "encoding/json"
-    "log"
     "net/http"
     "strings"
     "sync"
@@ -23,11 +22,8 @@ var (
 
 const authToken = "secrettoken123"
 
-func Handler(w http.ResponseWriter, r *http.Request) {
-    // Cek Authorization header
+func handler(w http.ResponseWriter, r *http.Request) {
     auth := strings.TrimSpace(r.Header.Get("Authorization"))
-    log.Println("Authorization header:", auth)
-
     if !strings.HasPrefix(auth, "Bearer ") {
         w.WriteHeader(http.StatusUnauthorized)
         json.NewEncoder(w).Encode(map[string]string{"error": "Unauthorized"})
@@ -62,7 +58,7 @@ func handleGet(w http.ResponseWriter, r *http.Request) {
     mu.Lock()
     defer mu.Unlock()
 
-    itemsSlice := []Item{}
+    itemsSlice := make([]Item, 0, len(items))
     for _, item := range items {
         itemsSlice = append(itemsSlice, item)
     }
@@ -81,11 +77,7 @@ func handlePost(w http.ResponseWriter, r *http.Request) {
     }
 
     id := uuid.New().String()
-    item := Item{
-        ID:    id,
-        Name:  newItem.Name,
-        Price: newItem.Price,
-    }
+    item := Item{ID: id, Name: newItem.Name, Price: newItem.Price}
 
     mu.Lock()
     items[id] = item
@@ -138,4 +130,10 @@ func handleDelete(w http.ResponseWriter, r *http.Request) {
     delete(items, deleteItem.ID)
     w.WriteHeader(http.StatusOK)
     json.NewEncoder(w).Encode(map[string]string{"message": "Item deleted"})
+}
+
+// Required entry point
+func main() {
+    http.HandleFunc("/", handler)
+    http.ListenAndServe(":3001", nil) // Vercel override this
 }
