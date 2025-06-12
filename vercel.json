@@ -1,0 +1,10 @@
+{
+  "functions": {
+    "api/go/*.go": {
+      "runtime": "go"
+    }
+  },
+  "rewrites": [
+    { "source": "/api/go", "destination": "/api/go/main.go" }
+  ]
+}

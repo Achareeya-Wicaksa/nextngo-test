@@ -1,103 +1,201 @@
-import Image from "next/image";
+"use client";
+import { useEffect, useState } from "react";
+
+type Item = {
+  id: string;
+  name: string;
+  price: number;
+};
+
+const AUTH_TOKEN = "secrettoken123";
+
+const rawUrl = process.env.NEXT_PUBLIC_API_URL;
+if (!rawUrl) {
+  throw new Error(
+    "API URL is not defined. Please set NEXT_PUBLIC_API_URL in your .env.local"
+  );
+}
+const API_URL: string = rawUrl;
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [items, setItems] = useState<Item[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [name, setName] = useState("");
+  const [price, setPrice] = useState<number>(0);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [error, setError] = useState("");
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+  async function fetchItems() {
+    setLoading(true);
+    try {
+      const res = await fetch(API_URL, {
+        headers: {
+          Authorization: `Bearer ${AUTH_TOKEN}`,
+        },
+      });
+      if (!res.ok) throw new Error("Failed to fetch");
+      const data = await res.json();
+      setItems(data);
+    } catch (err) {
+      setError("Error fetching items");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    fetchItems();
+  }, []);
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError("");
+    if (!name || price <= 0) {
+      setError("Please enter valid name and price");
+      return;
+    }
+
+    try {
+      let res;
+      if (editingId) {
+
+        res = await fetch(API_URL, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${AUTH_TOKEN}`,
+          },
+          body: JSON.stringify({ id: editingId, name, price }),
+        });
+      } else {
+        res = await fetch(API_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${AUTH_TOKEN}`,
+          },
+          body: JSON.stringify({ name, price }),
+        });
+      }
+      if (!res.ok) throw new Error("Request failed");
+      await fetchItems();
+      setName("");
+      setPrice(0);
+      setEditingId(null);
+    } catch {
+      setError("Failed to save item");
+    }
+  }
+
+  async function handleDelete(id: string) {
+    try {
+
+      const res = await fetch(API_URL, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${AUTH_TOKEN}`,
+        },
+        body: JSON.stringify({ id }),
+      });
+      if (!res.ok) throw new Error("Delete failed");
+      await fetchItems();
+    } catch {
+      setError("Failed to delete item");
+    }
+  }
+
+  function startEdit(item: Item) {
+    setName(item.name);
+    setPrice(item.price);
+    setEditingId(item.id);
+  }
+
+  function cancelEdit() {
+    setName("");
+    setPrice(0);
+    setEditingId(null);
+    setError("");
+  }
+
+  return (
+    <div className="max-w-xl mx-auto p-6 bg-white rounded-md shadow-md mt-10">
+      <h1 className="text-2xl font-semibold mb-6 text-pastel-primary">
+       CRUD Items
+      </h1>
+
+      {error && <p className="text-red-500 mb-4">{error}</p>}
+
+      <form onSubmit={handleSubmit} className="mb-6 flex flex-col gap-3">
+        <input
+          type="text"
+          placeholder="Name"
+          className="p-2 border border-gray-300 rounded"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+        />
+        <input
+          type="number"
+          placeholder="Price"
+          className="p-2 border border-gray-300 rounded"
+          value={price}
+          onChange={(e) => setPrice(parseInt(e.target.value))}
+          required
+          min={1}
+        />
+        <div className="flex gap-3">
+          <button
+            type="submit"
+            className="bg-green-400 text-white px-4 py-2 rounded hover:bg-pastel-secondary transition"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+            {editingId ? "Update" : "Add"}
+          </button>
+          {editingId && (
+            <button
+              type="button"
+              onClick={cancelEdit}
+              className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400 transition"
+            >
+              Cancel
+            </button>
+          )}
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      </form>
+
+      {loading ? (
+        <p>Loading...</p>
+      ) : items.length === 0 ? (
+        <p className="text-red-500">No items found</p>
+      ) : (
+        <ul className="space-y-4">
+          {items.map((item) => (
+            <li
+              key={item.id}
+              className="p-4 rounded flex justify-between items-center"
+            >
+              <div>
+                <p className="font-semibold">{item.name}</p>
+                <p className="text-gray-600">Rp.{item.price}</p>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => startEdit(item)}
+                  className="text-blue-600 hover:underline"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => handleDelete(item.id)}
+                  className="text-red-600 hover:underline"
+                >
+                  Delete
+                </button>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
