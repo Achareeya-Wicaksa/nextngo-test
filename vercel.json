@@ -1,14 +1,23 @@
 {
   "version": 2,
-  "functions": {
-    "backend/api/items.go": {
-      "runtime": "go"
+  "builds": [
+    {
+      "src": "backend/api/items.go",
+      "use": "@vercel/go"
+    },
+    {
+      "src": "next.config.js",
+      "use": "@vercel/next"
     }
-  },
+  ],
   "routes": [
     {
       "src": "/api/items",
       "dest": "backend/api/items.go"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/"
     }
   ]
 }
