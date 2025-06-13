@@ -1,7 +1,6 @@
 # 🛠️ CRUD App with Next.js (Frontend) & Golang (Backend)
 
-A simple full-stack CRUD application built using **Next.js 15 (App Router)** as the frontend and **Go (Golang)** as the backend.  
-This app is deployable in serverless environments (like Vercel) and includes temporary data storage (no database) with basic CRUD functionalities.
+![verceldeploy](public/images/vercelgif.gif)
 
 ---
 
