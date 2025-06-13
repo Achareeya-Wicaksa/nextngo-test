@@ -1,36 +1,106 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🛠️ CRUD App with Next.js (Frontend) & Golang (Backend)
 
-## Getting Started
+A simple full-stack CRUD application built using **Next.js 15 (App Router)** as the frontend and **Go (Golang)** as the backend.  
+This app is deployable in serverless environments (like Vercel) and includes temporary data storage (no database) with basic CRUD functionalities.
 
-First, run the development server:
+---
+
+## 🔧 Requirements
+
+Pastikan Anda sudah menginstal:
+
+- ✅ [Node.js](https://nodejs.org/) (disarankan versi 18+)
+- ✅ [npm](https://www.npmjs.com/) atau [yarn](https://yarnpkg.com/)
+- ✅ [Go](https://golang.org/dl/) (disarankan versi 1.20+)
+
+---
+
+## 🚀 Getting Started
+
+### 1. Clone repository
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/Achareeya-Wicaksa/nextngo-test.git
+cd nextngo-test
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 📦 Frontend Setup (Next.js)
+### 📁 Lokasi: ./
+### 📄 Langkah-langkah:
+```bash
+npm install
+npm run dev
+```
+Frontend akan berjalan di http://localhost:3000
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🧩 Backend Setup (Golang)
+### 📁 Lokasi: ./src/api
+### 📄 Langkah-langkah:
+```bash
+cd backend
+*pastikan sudah masuk ke folder backend
+go run main.go
+*pastikan sudah menginstall go 
+```
+Frontend akan berjalan di http://localhost:3000
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## Learn More
+## 📌 Available Endpoints
+| Method | Endpoint          | Description       |
+|--------|-------------------|-------------------|
+| GET    | `/api/items`      | Get all users     |
+| POST   | `/api/items`      | Create new item   |
+| PUT    | `/api/items`  | Update user by ID |
+| DELETE | `/api/items`  | Delete user by ID |
 
-To learn more about Next.js, take a look at the following resources:
+** apabila mengirim lewat postman/swagger pastikan sudah menggunakan auth bearer "secrettoken123"
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🧪 Link koleksi Postman:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Klik di sini untuk lihat koleksi API
+[https://documenter.getpostman.com/view/45855326/2sB2x6kXUt](https://documenter.getpostman.com/view/45855326/2sB2x6kXUt)
 
-## Deploy on Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 📂 Struktur Proyek Singkat
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+nextngo-test/
+├── backend/                
+│   ├── api/
+│   │     
+│   └── main.go          
+├── src/   
+├────── app/            
+│        ├── page.tsx
+├── public/             
+├── styles/             
+│   └── globals.css
+├── tailwind.config.ts
+├── postcss.config.js
+├── tsconfig.json
+├── next.config.js
+├── package.json
+└── README.md            # You're here
+
+```
+
+## 💡 Catatan Tambahan
+
+- Backend tidak menggunakan database — data hanya disimpan sementara di memori.
+
+- Frontend dan backend berjalan terpisah:
+
+- Frontend: port 3000
+
+- Backend: port 3001
+
+- CORS di-backend hanya mengizinkan akses dari http://localhost:3000
+
+
+## 🧪 Link koleksi Postman:
+
+Klik di sini untuk lihat Frontend yang berhasil deploy Vercel
+[https://nextdango-test-cbi.vercel.app/](https://nextdango-test-cbi.vercel.app/)
+
+Klik di sini untuk lihat Backend serverless yang berhasil deploy Vercel
+[https://nextdango-test-cbi.vercel.app/](https://crud-next-go-serverless-vercel.vercel.app/api/items)
